@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://64jvqxhhsevj"]
+
+[ext_resource type="Texture2D" uid="uid://buh7b3olr2bjc" path="res://img/frogger sheet1.png" id="1_youpu"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_obqxa"]
+radius = 38.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ytbt5"]
+atlas = ExtResource("1_youpu")
+region = Rect2(16, 56, 8, 8)
+
+[node name="Token" type="Area2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_obqxa")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 5
+texture_filter = 1
+scale = Vector2(8, 8)
+texture = SubResource("AtlasTexture_ytbt5")

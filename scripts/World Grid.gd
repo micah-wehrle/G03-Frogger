@@ -1,11 +1,19 @@
 extends Node2D
 
-var world = '0gr 0gr 0gr 0gr 0rc 0rc 0rc 0rc 0rc ';
+var world = '0gr 0gr 0gr 0gr 0ge 0sw 0rw 0rc 0rc 0rc 2rw 2sw 2ge 0we 0wa 0wa 0wa 0wa 0wa 2ge ';
 var world_index = 2;
 var tile_size = 80; #10x
 var img_scale = 10;
 
 var row_tile_count = 13;
+
+var rows = [];
+
+const starting_token_chance = -0.5;
+const token_bump = 0.1;
+var token_chance = starting_token_chance - 1.0;
+var token_range = 1; #from edge
+var token_path = "res://scene items/token.tscn";
 
 #var row_item_path = "res://scene items/world_row.tscn";
 
@@ -14,18 +22,22 @@ var row_tile_count = 13;
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	for i in 50:
-		world = world + random_world_bit();
+	add_to_world();
 	
-	for i in row_tile_count * 10:
+	for i in row_tile_count + 5:
 		var row = build_row(get_first_world_row());
+		rows.push_back(row);
 		add_child(row);
-		row.position.y = -i * tile_size;
+		row.position.y = -(i-2) * tile_size;
 	pass;
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
+
+func add_to_world():
+	for i in 20:
+		world = world + random_world_bit();
 
 func add_row(i: int):
 	pass;
@@ -33,9 +45,21 @@ func add_row(i: int):
 func get_first_world_row():
 	var sub = world.substr(0,3);
 	world = world.erase(0,4);
+	if world.length() < 200:
+		add_to_world();
+		print(world.length());
 	return sub;
 
+var row_index = 0;
 func build_row(row_data: String):
+	row_index += 1;
+	
+	var tile_spot = -1;
+	token_chance += token_bump;
+	if randf() <= token_chance:
+		token_chance = starting_token_chance;
+		tile_spot = token_range + randi_range(0, row_tile_count - token_range - 1);
+	
 	var row = Node2D.new();
 	
 	var row_type = row_data.substr(1);
@@ -43,28 +67,42 @@ func build_row(row_data: String):
 	for i in row_tile_count:
 		var tile;
 		if row_type == 'wr':
-			if i % 4 == start_i:
-				tile = create_tile( tile_indexes[ 'wr' ].pick_random(), int(row_data[0]), true);
+			if (i+start_i) % 4 == 0:
+				tile = create_tile( tile_indexes[ 'wr' ].pick_random(), int(row_data[0]), 'steppable', true);
 			else:
-				tile = create_tile( tile_indexes[ 'wa' ].pick_random(), int(row_data[0]), true);
+				tile = create_tile( tile_indexes[ 'wa' ].pick_random(), int(row_data[0]), 'kill', true);
+		elif row_type == 'wa':
+			tile = create_tile( tile_indexes[ 'wa' ].pick_random(), int(row_data[0]), 'kill', true);
 		else:
-			tile = create_tile( tile_indexes[ row_type ].pick_random(), int(row_data[0]), true);
+			tile = create_tile( tile_indexes[ row_type ].pick_random(), int(row_data[0]), 'stepable', true);
 		
 		row.add_child(tile);
 		tile.position.x = i*tile_size;
-	if row_type[0] == 'r':
+		if i == tile_spot:
+			var token = load(token_path).instantiate();
+			row.add_child(token);
+			token.position.x = tile.position.x;
+	
+	if row_type == 'wr':
+		row_index -= 1; # otherwise logs on either side move the same direction
+	
+	if row_type[0] == 'r' or row_type == 'wa':
 		#create car spawner
 		var spawner = Node2D.new();
 		row.add_child(spawner);
 		spawner.set_script(spawner_script);
-		var dir = -1 if randf() < 0.5 else 1;
+		spawner.spawner_type = row_type;
+		var dir = -1 if row_index % 2 == 0 else 1;
 		spawner.position.x = -tile_size * 2 if dir == 1 else tile_size * (row_tile_count + 2);
 		spawner.dir = dir;
 		spawner.grid = self;
 	return row;
 
-func create_tile(index: int, rot: int, border: bool = false) -> Node2D:
+var unique_tile_index = 0;
+func create_tile(index: int, rot: int, tile_name: String, border: bool = false) -> Node2D:
 	var node = Node2D.new();
+	unique_tile_index += 1;
+	node.name = tile_name + ' ' + str(unique_tile_index);
 	var sprite = Sprite2D.new();
 	sprite.name = 'Sprite2D';
 	node.add_child(sprite);
@@ -92,9 +130,13 @@ func create_tile(index: int, rot: int, border: bool = false) -> Node2D:
 		
 	return node;
 
-
-
-
+func player_shifted_up():
+	rows.pop_front().queue_free();
+	var y_pos = rows[-1].position.y - tile_size;
+	var row = build_row(get_first_world_row());
+	rows.push_back(row);
+	add_child(row);
+	row.position.y = y_pos;
 
 func random_world_bit():
 	return raw_world_parts.pick_random() + ' ';

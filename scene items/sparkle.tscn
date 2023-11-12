@@ -1,0 +1,79 @@
+[gd_scene load_steps=12 format=3 uid="uid://ckr55mhocf34c"]
+
+[ext_resource type="Texture2D" uid="uid://buh7b3olr2bjc" path="res://img/frogger sheet1.png" id="1_464wb"]
+[ext_resource type="Script" path="res://scripts/Animation Burn.gd" id="2_26k7i"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a2tkh"]
+atlas = ExtResource("1_464wb")
+region = Rect2(0, 48, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4h1ev"]
+atlas = ExtResource("1_464wb")
+region = Rect2(8, 48, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0d2l4"]
+atlas = ExtResource("1_464wb")
+region = Rect2(16, 48, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_so4if"]
+atlas = ExtResource("1_464wb")
+region = Rect2(24, 48, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2hy1h"]
+atlas = ExtResource("1_464wb")
+region = Rect2(32, 48, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pivmh"]
+atlas = ExtResource("1_464wb")
+region = Rect2(40, 48, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qw2np"]
+atlas = ExtResource("1_464wb")
+region = Rect2(48, 48, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8guv3"]
+atlas = ExtResource("1_464wb")
+region = Rect2(56, 48, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6pwt8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a2tkh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4h1ev")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0d2l4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_so4if")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2hy1h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pivmh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qw2np")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8guv3")
+}],
+"loop": false,
+"name": &"default",
+"speed": 23.0
+}]
+
+[node name="Sparkle" type="AnimatedSprite2D"]
+self_modulate = Color(1, 1, 1, 0.501961)
+z_index = 11
+texture_filter = 1
+position = Vector2(3.8147e-06, -3.8147e-06)
+scale = Vector2(8, 8)
+sprite_frames = SubResource("SpriteFrames_6pwt8")
+autoplay = "default"
+frame_progress = 0.635265
+script = ExtResource("2_26k7i")

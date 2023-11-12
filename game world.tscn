@@ -1,9 +1,46 @@
-[gd_scene load_steps=4 format=3 uid="uid://dlirnbynwxuk7"]
+[gd_scene load_steps=19 format=3 uid="uid://dlirnbynwxuk7"]
 
 [ext_resource type="Script" path="res://scripts/World Grid.gd" id="1_0jyku"]
 [ext_resource type="Script" path="res://scripts/Player.gd" id="2_1ighr"]
+[ext_resource type="Script" path="res://scripts/Scanlines.gd" id="3_o3o8w"]
+[ext_resource type="AudioStream" uid="uid://b3vwr4s0hsf1f" path="res://sounds/jump.wav" id="4_pijed"]
+[ext_resource type="AudioStream" uid="uid://c07ucfa50dd8v" path="res://sounds/splash1.wav" id="5_d8iek"]
+[ext_resource type="AudioStream" uid="uid://coasq21ah477c" path="res://sounds/pickupCoin1.wav" id="6_aque6"]
+[ext_resource type="Script" path="res://scripts/Header UI.gd" id="6_p28u6"]
+[ext_resource type="FontFile" uid="uid://3fbwdg7gw3el" path="res://fonts/runescape_uf.ttf" id="6_ru888"]
+[ext_resource type="AudioStream" uid="uid://2q1xs6qh3ijb" path="res://sounds/crash1.wav" id="7_5vtri"]
+[ext_resource type="Texture2D" uid="uid://c7t0xwjgblld0" path="res://img/white.jpg" id="7_hc2ih"]
+[ext_resource type="Script" path="res://scripts/HTTP.gd" id="10_1meql"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7etiq"]
+size = Vector2(69, 2925)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xb0mt"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_sq8rv"]
+font = ExtResource("6_ru888")
+font_size = 156
+font_color = Color(1, 1, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_vlulo"]
+font = ExtResource("6_ru888")
+font_size = 100
+font_color = Color(1, 1, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_b58i4"]
+font = ExtResource("6_ru888")
+font_size = 376
+font_color = Color(1, 1, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_b2csd"]
+font = ExtResource("6_ru888")
+font_size = 100
+font_color = Color(1, 1, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_ar1gy"]
+font = ExtResource("6_ru888")
+font_size = 376
+font_color = Color(0, 1, 0, 1)
 
 [node name="Scene" type="Node2D"]
 
@@ -16,9 +53,218 @@ script = ExtResource("2_1ighr")
 [node name="Camera2D" type="Camera2D" parent="Player Sled"]
 position = Vector2(480, -480)
 
+[node name="Scanlines" type="Node2D" parent="Player Sled/Camera2D"]
+script = ExtResource("3_o3o8w")
+
+[node name="Cleanup Wall Area" type="Area2D" parent="Player Sled"]
+unique_name_in_owner = true
+
+[node name="Cleanup Wall Left" type="CollisionShape2D" parent="Player Sled/Cleanup Wall Area"]
+position = Vector2(-1204, -457.5)
+scale = Vector2(1, 5.76)
+shape = SubResource("RectangleShape2D_7etiq")
+debug_color = Color(0, 0.6, 0.701961, 0.419608)
+
+[node name="Cleanup Wall Right" type="CollisionShape2D" parent="Player Sled/Cleanup Wall Area"]
+position = Vector2(2321, -457)
+scale = Vector2(1, 5.76)
+shape = SubResource("RectangleShape2D_7etiq")
+debug_color = Color(0, 0.6, 0.701961, 0.419608)
+
+[node name="Kill Walls" type="StaticBody2D" parent="Player Sled"]
+unique_name_in_owner = true
+collision_layer = 2
+collision_mask = 2
+
+[node name="Kill Left" type="CollisionShape2D" parent="Player Sled/Kill Walls"]
+position = Vector2(-67, -436)
+scale = Vector2(1, 0.519998)
+shape = SubResource("RectangleShape2D_7etiq")
+debug_color = Color(0, 0.6, 0.701961, 0.419608)
+
+[node name="Kill Right" type="CollisionShape2D" parent="Player Sled/Kill Walls"]
+position = Vector2(1026, -457)
+scale = Vector2(1.00362, 0.489885)
+shape = SubResource("RectangleShape2D_7etiq")
+debug_color = Color(0, 0.6, 0.701961, 0.419608)
+
+[node name="Sound cloud" type="Node2D" parent="Player Sled"]
+process_mode = 3
+
+[node name="Jump" type="AudioStreamPlayer2D" parent="Player Sled/Sound cloud"]
+unique_name_in_owner = true
+stream = ExtResource("4_pijed")
+
+[node name="Splash" type="AudioStreamPlayer2D" parent="Player Sled/Sound cloud"]
+unique_name_in_owner = true
+stream = ExtResource("5_d8iek")
+
+[node name="Coin" type="AudioStreamPlayer2D" parent="Player Sled/Sound cloud"]
+unique_name_in_owner = true
+stream = ExtResource("6_aque6")
+
+[node name="Crash" type="AudioStreamPlayer2D" parent="Player Sled/Sound cloud"]
+unique_name_in_owner = true
+stream = ExtResource("7_5vtri")
+
 [node name="RigidBody2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
 shape = SubResource("RectangleShape2D_xb0mt")
 
-[node name="RigidBody2D2" type="RigidBody2D" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_p28u6")
+
+[node name="Header Background" type="ColorRect" parent="CanvasLayer"]
+offset_right = 1040.0
+offset_bottom = 160.0
+color = Color(0, 0, 0, 1)
+
+[node name="Distance Parent" type="ReferenceRect" parent="CanvasLayer/Header Background"]
+layout_mode = 0
+offset_right = 189.0
+offset_bottom = 160.0
+
+[node name="Distance Header" type="Label" parent="CanvasLayer/Header Background/Distance Parent"]
+layout_mode = 0
+offset_left = 43.0
+offset_top = 14.0
+offset_right = 588.0
+offset_bottom = 173.0
+scale = Vector2(0.2, 0.2)
+text = "Distance: "
+label_settings = SubResource("LabelSettings_sq8rv")
+
+[node name="Distance Record" type="Label" parent="CanvasLayer/Header Background/Distance Parent"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 125.0
+offset_right = 927.0
+offset_bottom = 284.0
+scale = Vector2(0.2, 0.2)
+text = "Record:"
+label_settings = SubResource("LabelSettings_vlulo")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Distance" type="Label" parent="CanvasLayer/Header Background/Distance Parent"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 35.0
+offset_right = 901.0
+offset_bottom = 490.0
+scale = Vector2(0.2, 0.2)
+text = "0
+"
+label_settings = SubResource("LabelSettings_b58i4")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score Parent" type="ReferenceRect" parent="CanvasLayer/Header Background"]
+layout_mode = 0
+offset_left = 849.0
+offset_right = 1038.0
+offset_bottom = 160.0
+
+[node name="Score Header" type="Label" parent="CanvasLayer/Header Background/Score Parent"]
+layout_mode = 0
+offset_left = 39.0
+offset_top = 15.0
+offset_right = 584.0
+offset_bottom = 174.0
+scale = Vector2(0.2, 0.2)
+text = "Score:"
+label_settings = SubResource("LabelSettings_sq8rv")
+horizontal_alignment = 1
+
+[node name="Score Record" type="Label" parent="CanvasLayer/Header Background/Score Parent"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 125.0
+offset_right = 941.0
+offset_bottom = 284.0
+scale = Vector2(0.2, 0.2)
+text = "Record:
+"
+label_settings = SubResource("LabelSettings_b2csd")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score" type="Label" parent="CanvasLayer/Header Background/Score Parent"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 34.0
+offset_right = 919.0
+offset_bottom = 489.0
+scale = Vector2(0.2, 0.2)
+text = "0
+"
+label_settings = SubResource("LabelSettings_b58i4")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ReferenceRect" type="ReferenceRect" parent="CanvasLayer/Header Background"]
+layout_mode = 0
+offset_left = 397.0
+offset_top = 12.0
+offset_right = 653.0
+offset_bottom = 113.0
+border_color = Color(1, 1, 0, 1)
+editor_only = false
+
+[node name="Frogger Header1" type="Label" parent="CanvasLayer/Header Background/ReferenceRect"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 4.00002
+offset_right = 1177.0
+offset_bottom = 459.0
+scale = Vector2(0.2, 0.2)
+text = "rogger"
+label_settings = SubResource("LabelSettings_b58i4")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Frogger Header2" type="Label" parent="CanvasLayer/Header Background/ReferenceRect"]
+layout_mode = 0
+offset_left = -3.0
+offset_top = 4.00002
+offset_right = 422.0
+offset_bottom = 459.0
+scale = Vector2(0.2, 0.2)
+text = "F"
+label_settings = SubResource("LabelSettings_ar1gy")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Time Parent" type="ReferenceRect" parent="CanvasLayer"]
+offset_left = 200.0
+offset_top = 123.0
+offset_right = 841.0
+offset_bottom = 155.0
+
+[node name="Time" type="Label" parent="CanvasLayer/Time Parent"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 3.0
+offset_right = 549.0
+offset_bottom = 162.0
+scale = Vector2(0.2, 0.2)
+text = "Time:"
+label_settings = SubResource("LabelSettings_sq8rv")
+
+[node name="Time Bar" type="TextureProgressBar" parent="CanvasLayer/Time Parent"]
+self_modulate = Color(0, 1, 0, 1)
+layout_mode = 0
+offset_left = 64.0
+offset_top = 4.0
+offset_right = 65.0
+offset_bottom = 5.0
+scale = Vector2(570, 25)
+value = 100.0
+texture_progress = ExtResource("7_hc2ih")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+unique_name_in_owner = true
+timeout = 10.0
+script = ExtResource("10_1meql")
